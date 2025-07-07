@@ -1,0 +1,106 @@
+@font-face {
+    font-family: 'Pusab';
+    src: url('pusab.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+html, body {
+    height: 100%;
+    font-family: 'Pusab';
+    letter-spacing: -0.01em;
+    -webkit-text-size-adjust: 100%;
+    -webkit-text-stroke-color: black;
+    -webkit-text-stroke-width: 0.05em;
+    text-shadow: 0.1em 0.1em 0em rgba(0, 0, 0, 0.3);
+}
+
+body {
+    margin: 0;
+    text-align: center;
+    background: linear-gradient(to bottom, #0065fd, #002e73);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+    color: white;
+    font-size: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+p {
+    margin: 0;
+    padding: 20px;
+}
+
+h1 {
+    font-size: 4rem;
+    padding: 0;
+    margin: 5px;
+}
+
+.container {
+    max-width: 1000px;
+    width: 100%;
+}
+
+.scale9-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    position: relative;
+    max-width: 80%;
+    margin: auto;
+}
+
+.scale9-background {
+    position: absolute;
+    inset: 0;
+    border-width: 40px;
+    border-style: solid;
+    border-image: url('square.png') 40 fill stretch;
+    opacity: 0.5;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.text-container {
+    z-index: 1;
+    position: relative;
+    text-align: center;
+    color: white;
+}
+
+.corner {
+    position: fixed;
+    width: 150px;
+    height: auto;
+    pointer-events: none;
+    z-index: 1000;
+}
+
+.bottom-right {
+    right: 0;
+    bottom: 0;
+    transform: scaleX(-1);
+}
+
+.bottom-left {
+    left: 0;
+    bottom: 0;
+}
+
+.top-left {
+    left: 0;
+    top: 0;
+    transform: scaleY(-1);
+}
+
+.top-right {
+    right: 0;
+    top: 0;
+    transform: scale(-1, -1);
+}

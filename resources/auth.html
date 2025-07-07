@@ -1,0 +1,27 @@
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Authorizing</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="styles.css">
+    </head>
+    <body>
+        <h1>Waiting...</h1>
+        <script>
+            const Http = new XMLHttpRequest();
+            const url="http://localhost:23523/auth.html?" + document.location.hash.substring(1);
+            //don't show the token in the URL in case someone shows it live for some reason
+            document.location.hash = "";
+            Http.open("GET", url);
+            Http.send();
+
+            Http.onreadystatechange = (e) => {
+                document.location.href = "http://localhost:23523/success.html";
+            }
+        </script>
+        <img src="corner.png" class="corner bottom-right">
+		<img src="corner.png" class="corner bottom-left">
+		<img src="corner.png" class="corner top-left">
+		<img src="corner.png" class="corner top-right">
+    </body>
+</html>

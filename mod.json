@@ -1,0 +1,36 @@
+{
+	"geode": "4.6.1",
+	"gd": {
+		"win": "2.2074",
+		"android": "2.2074",
+		"mac": "2.2074",
+		"ios": "2.2074"
+	},
+	"id": "alphalaneous.twitch_chat_api",
+	"name": "Twitch Chat API",
+	"version": "v0.1.0-alpha.1",
+	"developer": "Alphalaneous",
+	"description": "API for reading Twitch Chat",
+	"settings": {
+		"refresh-login": {
+			"type": "custom:button",
+			"name": "Account"
+		}
+	},
+	"api": {
+		"include": [
+			"include/*.hpp"
+		]
+	},
+	"resources": {
+		"files": [
+			"resources/*"
+		]
+	},
+	"links": {
+        "homepage": "https://linktr.ee/Alphalaneous",
+        "source": "https://github.com/Alphalaneous/Twitch-Chat-API",
+        "community": "https://discord.gg/Txn2CA5dHF"
+    },
+    "tags": ["online", "api"]
+}
