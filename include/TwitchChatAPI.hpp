@@ -122,11 +122,13 @@ public:
     void getToken(geode::Mod* mod, std::function<void(const geode::Result<std::string>&)> callback);
     void registerOnMessageCallback(std::function<void(const ChatMessage&)> callback);
     void registerOnConnectedCallback(std::function<void()> callback);
+    void registerTokenChangeCallback(geode::Mod* mod, std::function<void(const std::string&)> callback);
     bool isLoggedIn();
     bool modHasTokenPermission(geode::Mod* mod);
     std::string getUsername();
     std::vector<std::function<void(const ChatMessage&)>> getMessageCallbacks();
     std::vector<std::function<void()>> getOnConnectedCallbacks();
+    std::unordered_map<geode::Mod*, std::function<void(const std::string&)>> getTokenChangeCallbacks();
 
 private:
     struct Impl;

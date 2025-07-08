@@ -15,7 +15,7 @@ TwitchChatAPI::get()->promptLogin();
 ```
 
 ```cpp
-TwitchChatAPI::get()->promptLogin([] (const geode::Result<std::string>& channel) {
+TwitchChatAPI::get()->promptLogin([] (const Result<std::string>& channel) {
     log::info("{}", channel.unwrapOr("unknown"));
 });
 ```
@@ -55,8 +55,16 @@ Sometimes you may need to send a token somewhere else for verification, this mod
 This method returns a string result, if the user agreed, the token will be given, else it will return an error result and cannot be gotten.
 
 ```cpp
-TwitchChatAPI::get()->getToken(Mod::get(), [] (const geode::Result<std::string>& token) {
-    log::info("token {}", token.unwrapOr("err"));
+TwitchChatAPI::get()->getToken(Mod::get(), [] (const Result<std::string>& token) {
+    log::info("Token: {}", token.unwrapOr("err"));
+});
+```
+
+Alongside that, you may need to know whenever a token is changed, which you can register a callback for. This callback will only be recieved by mods that have permission to access the token. Example:
+
+```cpp
+TwitchChatAPI::get()->registerTokenChangeCallback(Mod::get(), [] (const std::string& token) {
+    log::info("Token: {}", token);
 });
 ```
 
@@ -64,7 +72,7 @@ TwitchChatAPI::get()->getToken(Mod::get(), [] (const geode::Result<std::string>&
 
 ```cpp
 bool isLoggedIn(); // returns true if user is logged in
-bool modHasTokenPermission(geode::Mod* mod); // returns true if user has granted mod token access
+bool modHasTokenPermission(Mod* mod); // returns true if user has granted mod token access
 std::string getUsername(); // returns the logged in channel's username
 ```
 

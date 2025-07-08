@@ -24,5 +24,6 @@ public:
     static TwitchChat* get();
     static bool loggedIn();
     std::string getToken();
+    std::string getChannelName();
     void login(const std::string& token, const std::string& channelName);
 };

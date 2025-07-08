@@ -68,6 +68,10 @@ void TwitchChat::connectAsync() {
     t.detach();
 }
 
+std::string TwitchChat::getChannelName() {
+    return m_channelName;
+}
+
 std::vector<std::string> split(const std::string& str, const std::string& delimiter, int limit = -1) {
     std::vector<std::string> result;
     size_t start = 0;

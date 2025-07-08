@@ -301,6 +301,8 @@ TwitchChatAPI* TwitchChatAPI::s_instance = nullptr;
 struct TwitchChatAPI::Impl {
     std::vector<std::function<void(const ChatMessage&)>> chatMessageCallbacks;
     std::vector<std::function<void()>> onConnectedCallbacks;
+    std::unordered_map<geode::Mod*, std::function<void(const std::string&)>> onTokenChangeCallbacks;
+
     bool popupOpen = false;
 
     void runTokenCallback(std::function<void(const geode::Result<std::string>&)> callback, bool yes) {
@@ -349,7 +351,15 @@ std::vector<std::function<void()>> TwitchChatAPI::getOnConnectedCallbacks() {
     return impl->onConnectedCallbacks;
 }
 
+std::unordered_map<geode::Mod*, std::function<void(const std::string&)>> TwitchChatAPI::getTokenChangeCallbacks() {
+    return impl->onTokenChangeCallbacks;
+}
+
 void TwitchChatAPI::getToken(geode::Mod* mod, std::function<void(const geode::Result<std::string>&)> callback) {
+    if (modHasTokenPermission(mod)) {
+        runTokenCallback(callback, true);
+        return;
+    }
     geode::createQuickPopup(
         "Twitch Chat API",
         fmt::format(
@@ -378,6 +388,10 @@ void TwitchChatAPI::registerOnConnectedCallback(std::function<void()> callback) 
     impl->onConnectedCallbacks.push_back(std::move(callback));
 }
 
+void TwitchChatAPI::registerTokenChangeCallback(geode::Mod* mod, std::function<void(const std::string&)> callback) {
+    impl->onTokenChangeCallbacks[mod] = callback;
+}
+
 bool TwitchChatAPI::isLoggedIn() {
     return TwitchChat::loggedIn();
 }
@@ -387,7 +401,7 @@ bool TwitchChatAPI::modHasTokenPermission(geode::Mod* mod) {
 }
 
 std::string TwitchChatAPI::getUsername(){
-    return Mod::get()->getSavedValue<std::string>("twitch-channel");
+    return TwitchChat::get()->getChannelName();
 }
 
 TwitchChatAPI* TwitchChatAPI::get() {
