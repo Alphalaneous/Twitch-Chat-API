@@ -305,21 +305,26 @@ struct TwitchChatAPI::Impl {
 
     void runTokenCallback(std::function<void(const geode::Result<std::string>&)> callback, bool yes) {
         if (yes) callback(geode::Ok(TwitchChat::get()->getToken()));
-        else callback(geode::Err("User declined token access"));
+        else callback(geode::Err("User declined token access."));
     }
 };
 
-void TwitchChatAPI::promptLogin(bool force) {
+void TwitchChatAPI::promptLogin(std::function<void(const geode::Result<std::string>&)> callback, bool force) {
     if ((!TwitchChat::loggedIn() || force) && !impl->popupOpen) {
         impl->popupOpen = true;
-        geode::createQuickPopup("Twitch Login", "Authenticate <cg>Twitch Chat API</c> with Twitch?", "Cancel", "Ok", [this] (auto, bool yes) {
+        geode::createQuickPopup("Twitch Login", "Authenticate <cg>Twitch Chat API</c> with Twitch?", "Cancel", "Ok", [this, callback] (auto, bool yes) {
             if (yes) {
-                TwitchAuth::get()->loginTwitch([]() {
+                TwitchAuth::get()->loginTwitch([callback]() {
                     std::string token = Mod::get()->getSavedValue<std::string>("twitch-token");
                     std::string channel = Mod::get()->getSavedValue<std::string>("twitch-channel");
                     TwitchChat::resetInstance()->login(token, channel);
+                    callback(geode::Ok(channel));
                 });
             }
+            else {
+                callback(geode::Err("Login cancelled."));
+            }
+            
             impl->popupOpen = false;
         });
     }
@@ -343,6 +348,23 @@ std::vector<std::function<void()>> TwitchChatAPI::getOnConnectedCallbacks() {
     return impl->onConnectedCallbacks;
 }
 
+void TwitchChatAPI::getToken(geode::Mod* mod, std::function<void(const geode::Result<std::string>&)> callback) {
+    geode::createQuickPopup(
+        "Twitch Chat API",
+        fmt::format(
+            "<cg>{}</c> wants to access your Twitch chat <cr>token</c>. "
+            "This token has <cy>read only</c> permissions for <cb>chat messages</c>. "
+            "Do you wish to grant access?",
+            mod->getName()),
+        "No", "Yes",
+        [this, callback, mod](auto, bool yes) {
+            Mod::get()->setSavedValue(mod->getID(), yes);
+            runTokenCallback(callback, yes);
+        },
+        true
+    );
+}
+
 void TwitchChatAPI::runTokenCallback(std::function<void(const geode::Result<std::string>&)> callback, bool yes) {
     impl->runTokenCallback(std::move(callback), yes);
 }
@@ -353,6 +375,18 @@ void TwitchChatAPI::registerOnMessageCallback(std::function<void(const ChatMessa
 
 void TwitchChatAPI::registerOnConnectedCallback(std::function<void()> callback) {
     impl->onConnectedCallbacks.push_back(std::move(callback));
+}
+
+bool TwitchChatAPI::isLoggedIn() {
+    return TwitchChat::loggedIn();
+}
+
+bool TwitchChatAPI::modHasTokenPermission(geode::Mod* mod) {
+    return Mod::get()->getSavedValue<bool>(mod->getID());
+}
+
+std::string TwitchChatAPI::getUsername(){
+    return Mod::get()->getSavedValue<std::string>("twitch-channel");
 }
 
 TwitchChatAPI* TwitchChatAPI::get() {

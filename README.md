@@ -36,12 +36,12 @@ TwitchChatAPI::get()->registerOnConnectedCallback([] () {
 
 You do **not** need to use this unless you **need** direct access to the token. This method is **not** a log in method, and if you have to use it, must be used after a log in.
 
-Sometimes you may need to send a token somewhere else for verification, this mod allows this, but will prompt the user if they wish to agree to it. This token cannot do anything more than grab basic user information and read chat messages, and cannot access or modify sensitive information. If you need more access than this gives, you will need to set up your own log in flow to generate your own token.
+Sometimes you may need to send a token somewhere else for verification, this mod allows this, but will prompt the user if they wish to agree to it. This token cannot do anything more than grab basic user information and read chat messages, and cannot access or modify sensitive information. If you need more access than this gives, you will need to set up your own log in flow to generate your own token. You must pass in your mod to the method, per the example.
 
 This method returns a string result, if the user agreed, the token will be given, else it will return an error result and cannot be gotten.
 
 ```cpp
-TwitchChatAPI::get()->getToken([] (const geode::Result<std::string>& token) {
+TwitchChatAPI::get()->getToken(Mod::get(), [] (const geode::Result<std::string>& token) {
     log::info("token {}", token.unwrapOr("err"));
 });
 ```

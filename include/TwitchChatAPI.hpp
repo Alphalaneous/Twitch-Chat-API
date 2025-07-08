@@ -118,27 +118,15 @@ public:
 
     static TwitchChatAPI* get();
 
-    void promptLogin(bool force = false);
+    void promptLogin(std::function<void(const geode::Result<std::string>&)> callback = nullptr, bool force = false);
 
-    inline void getToken(std::function<void(const geode::Result<std::string>&)> callback) {
-        geode::Mod* mod = geode::Mod::get();
-        geode::createQuickPopup(
-            "Twitch Chat API",
-            fmt::format(
-                "<cg>{}</c> wants to access your Twitch chat <cr>token</c>. "
-                "This token has <cy>read only</c> permissions for <cb>chat messages</c>. "
-                "Do you wish to grant access?",
-                mod->getName()),
-            "No", "Yes",
-            [this, callback](auto, bool yes) {
-                runTokenCallback(callback, yes);
-            },
-            true
-        );
-    }
+    void getToken(geode::Mod* mod, std::function<void(const geode::Result<std::string>&)> callback);
 
     void registerOnMessageCallback(std::function<void(const ChatMessage&)> callback);
     void registerOnConnectedCallback(std::function<void()> callback);
+    bool isLoggedIn();
+    bool modHasTokenPermission(geode::Mod* mod);
+    std::string getUsername();
     std::vector<std::function<void(const ChatMessage&)>> getMessageCallbacks();
     std::vector<std::function<void()>> getOnConnectedCallbacks();
 
