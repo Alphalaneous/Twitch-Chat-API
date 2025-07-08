@@ -119,9 +119,7 @@ public:
     static TwitchChatAPI* get();
 
     void promptLogin(std::function<void(const geode::Result<std::string>&)> callback = nullptr, bool force = false);
-
     void getToken(geode::Mod* mod, std::function<void(const geode::Result<std::string>&)> callback);
-
     void registerOnMessageCallback(std::function<void(const ChatMessage&)> callback);
     void registerOnConnectedCallback(std::function<void()> callback);
     bool isLoggedIn();

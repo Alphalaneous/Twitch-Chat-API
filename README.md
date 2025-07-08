@@ -8,7 +8,21 @@ Users must authenticate with their Twitch Account for this mod to be able to see
 
 # Getting Started
 
-Prompting the user to log in is easy, just call `TwitchChatAPI::get()->promptLogin()`, and if you wish for it to always prompt, even when there is an account logged in, pass in `true` to force it. You can call this whenever, and it is recommended to have some way to prompt it so users do not have to go to this mod's settings to manage their account.
+Prompting the user to log in is easy, just call `TwitchChatAPI::get()->promptLogin(std::function<void(const geode::Result<std::string>&)> callback = nullptr, bool force = false)`, and if you wish for it to always prompt, even when there is an account logged in, pass in `true` to force it. You can call this whenever, and it is recommended to have some way to prompt it so users do not have to go to this mod's settings to manage their account. Examples:
+
+```cpp
+TwitchChatAPI::get()->promptLogin();
+```
+
+```cpp
+TwitchChatAPI::get()->promptLogin([] (const geode::Result<std::string>& channel) {
+    log::info("{}", channel.unwrapOr("unknown"));
+});
+```
+
+```cpp
+TwitchChatAPI::get()->promptLogin(nullptr, true);
+```
 
 ## Message Listening
 
@@ -46,30 +60,43 @@ TwitchChatAPI::get()->getToken(Mod::get(), [] (const geode::Result<std::string>&
 });
 ```
 
+## TwitchChatAPI Methods
+
+```cpp
+bool isLoggedIn(); // returns true if user is logged in
+bool modHasTokenPermission(geode::Mod* mod); // returns true if user has granted mod token access
+std::string getUsername(); // returns the logged in channel's username
+```
+
 ## ChatMessage Methods
 
 ```cpp
-const std::string& getUsername() const;
-const std::string& getDisplayName() const;
-const std::string& getMessage() const;
-const std::string& getMessageID() const;
-const std::string& getUserID() const;
-const std::string& getClientNonce() const;
-const std::string& getCommand() const;
-const std::string& getRawMessage() const;
-const std::vector<std::string>& getArguments() const;
-const cocos2d::ccColor3B& getColor() const;
-bool getHasColor() const;
-bool getIsFirstMessage() const;
-bool getIsTurbo() const;
-bool getIsReturningChatter() const;
-bool getIsMod() const;
-bool getIsVIP() const;
-bool getIsSubscriber() const;
-int getRoomID() const;
-unsigned long long int getTimestamp() const;
-const std::vector<BadgeInfo>& getBadges() const;
-const std::vector<EmoteInfo>& getEmotes() const;
+
+// Getters
+
+const std::string& getUsername() const; // returns the chatter's username
+const std::string& getDisplayName() const; // returns the chatter's display name
+const std::string& getMessage() const; // returns the chat message
+const std::string& getMessageID() const; // returns the chat message ID
+const std::string& getUserID() const;  // returns the chatter's user ID
+const std::string& getClientNonce() const; // returns the client nonce
+const std::string& getCommand() const; // returns the command in a chat message (first word when separated by spaces)
+const std::string& getRawMessage() const;  // returns the raw chat message from IRC
+const std::vector<std::string>& getArguments() const;  // returns the arguments in a chat message (all but first word when separated by spaces)
+const cocos2d::ccColor3B& getColor() const; // returns the chatter's chat color
+bool getHasColor() const;  // returns true if the chatter has a chat color
+bool getIsFirstMessage() const; // returns true if this this the chatter's first message in the channel
+bool getIsTurbo() const; // returns true if the chatter has Twitch Turbo
+bool getIsReturningChatter() const; // returns true if the chatter is a returning chatter
+bool getIsMod() const; // returns true if the chatter is a moderator
+bool getIsVIP() const; // returns true if the chatter is a VIP
+bool getIsSubscriber() const; // returns true if the chatter is a subscriber
+int getRoomID() const;  // returns the room ID of the channel
+unsigned long long int getTimestamp() const; // returns the timestamp of the message
+const std::vector<BadgeInfo>& getBadges() const; // returns a vector of Badge information of the chatter
+const std::vector<EmoteInfo>& getEmotes() const; // returns a vector of Emote information of the message
+
+// Setters
 
 void setUsername(std::string);
 void setDisplayName(std::string);

@@ -304,6 +304,7 @@ struct TwitchChatAPI::Impl {
     bool popupOpen = false;
 
     void runTokenCallback(std::function<void(const geode::Result<std::string>&)> callback, bool yes) {
+        if (!callback) return;
         if (yes) callback(geode::Ok(TwitchChat::get()->getToken()));
         else callback(geode::Err("User declined token access."));
     }
@@ -318,11 +319,11 @@ void TwitchChatAPI::promptLogin(std::function<void(const geode::Result<std::stri
                     std::string token = Mod::get()->getSavedValue<std::string>("twitch-token");
                     std::string channel = Mod::get()->getSavedValue<std::string>("twitch-channel");
                     TwitchChat::resetInstance()->login(token, channel);
-                    callback(geode::Ok(channel));
+                    if (callback) callback(geode::Ok(channel));
                 });
             }
             else {
-                callback(geode::Err("Login cancelled."));
+                if (callback) callback(geode::Err("Login cancelled."));
             }
             
             impl->popupOpen = false;
